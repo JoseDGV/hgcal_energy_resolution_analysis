@@ -23,7 +23,7 @@ def tau_dataset(root='data/taus'):
 def single_photon_dataset():
     import uptools
     # rootfile = 'data/sapta.root'
-    rootfile = 'data/sapta_Mar24_testNanoML_CloseBy_Photon_100GeV.root'
+    rootfile = 'step3_Gamma_E25_n1000_part9.root'
 
     branches = [
         b'rechit_eta',
