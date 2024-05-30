@@ -76,15 +76,17 @@ def single_photon_dataset():
                 y = torch.from_numpy(y[is_pos]).type(torch.int),
                 batch = torch.zeros((is_pos).sum()).long()
                 )
+            # The following segment of code was commented out from the original code as it is not necesary to split by end cap on single particle production, as there are no 
+            # events produced in the negative endcap
             # Then neg endcap; be sure to flip z quantities
-            X_neg = X[~is_pos]
-            X_neg[:,1] *= -1
-            X_neg[:,8] *= -1
-            yield Data(
-                x = torch.from_numpy(X_neg).type(torch.float),
-                y = torch.from_numpy(y[~is_pos]).type(torch.int),
-                batch = torch.zeros((~is_pos).sum()).long()
-                )
+           # X_neg = X[~is_pos]
+           # X_neg[:,1] *= -1
+           # X_neg[:,8] *= -1
+           # yield Data(
+           #     x = torch.from_numpy(X_neg).type(torch.float),
+           #     y = torch.from_numpy(y[~is_pos]).type(torch.int),
+           #     batch = torch.zeros((~is_pos).sum()).long()
+           #     )
 
     return data_iterator()
 
