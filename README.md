@@ -1,6 +1,6 @@
 # Fork Note
 
-This is a fork of https://github.com/tklijnsma/hgcal_training_scripts/. The purpose of this repo is to do an energy resolution analysis of the GNN algorithm that reconstructs particles at the CMS HGCal. The actual energy resolution analysis is at energy_resolution analysis.py. The rest of the files are the training and plotting scripts done by THomas Klijnsma in the original repo.
+This is a fork of https://github.com/tklijnsma/hgcal_training_scripts/. The purpose of this repo is to do an energy resolution analysis of the GNN algorithm that reconstructs particles at the CMS HGCal. The actual energy resolution analysis is at the energy_resolution analysis folder. The rest of the files are the training and plotting scripts done by THomas Klijnsma in the original repo.
 
 # Note
 
