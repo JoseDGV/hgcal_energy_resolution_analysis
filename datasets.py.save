@@ -1,6 +1,3 @@
-
-
-
 import numpy as np
 import torch
 from torch_geometric.data import DataLoader, Data
@@ -19,7 +16,7 @@ def tau_dataset(root='data/taus'):
    #     'data/taus/32_nanoML_45.npz',
    #     'data/taus/5_nanoML_51.npz',
    #     'data/taus/86_nanoML_97.npz',
-   #     ])
+   #     ])    
     return dataset
 
 
@@ -30,46 +27,9 @@ def single_photon_dataset():
     #rootfile = 'step3_Gamma_E2_n1000_part1.root'
     #rootfile = 'step3_Gamma_E50_n1000_part1.root'
     #rootfile = 'step3_Kaon_E2_n1000_part7.root'
-    #rootfile = 'step3_Pion_E2_n1000_part4.root'
-    #rootfile = 'step3_Pion_E3_n1000_part6.root'
-    #rootfile = 'step3_Pion_E5_n1000_part10.root'
-    #rootfile = 'step3_Pion_E10_n1000_part5.root'
-    #rootfile = 'step3_Pion_E25_n1000_part3.root'
-    #rootfile = 'step3_Pion_E50_n1000_part1.root'
-    #rootfile = 'step3_Pion_E75_n1000_part7.root'
-    #rootfile = 'step3_Pion_E100_n1000_part9.root'
-    #rootfile = 'step3_Pion_E200_n1000_part2.root'
-    #rootfile = 'step3_Pion_E300_n1000_part10.root'
-    #rootfile = 'step3_Kaon_E2_n1000_part2.root'
-    #rootfile = 'step3_Kaon_E3_n1000_part3.root'
-    #rootfile = 'step3_Kaon_E5_n1000_part5.root'
-    #rootfile = 'step3_Kaon_E10_n1000_part10.root'
-    #rootfile = 'step3_Kaon_E25_n1000_part5.root'
-    #rootfile = 'step3_Kaon_E50_n1000_part10.root'
-    #rootfile = 'step3_Kaon_E75_n1000_part7.root'
-    #rootfile = 'step3_Kaon_E100_n1000_part10.root'
-    #rootfile = 'step3_Kaon_E200_n1000_part3.root'
-    #rootfile = 'step3_Kaon_E300_n1000_part3.root'
-    #rootfile = 'step3_Gamma_E2_n1000_part4.root'
-    #rootfile = 'step3_Gamma_E3_n1000_part8.root'
-    #rootfile = 'step3_Gamma_E5_n1000_part10.root'
-    #rootfile = 'step3_Gamma_E10_n1000_part2.root'
-    rootfile = 'step3_Gamma_E300_n1000_part1.root'
-    #rootfile = 'step3_Gamma_E50_n1000_part7.root'
-    #rootfile = 'step3_Gamma_E75_n1000_part1.root'
-    #rootfile = 'step3_Gamma_E100_n1000_part5.root'
-    #rootfile = 'step3_Gamma_E200_n1000_part3.root'
-    #rootfile = 'step3_Gamma_E300_n1000_part6.root'
-    #rootfile = 'step3_Tau_E2_n1000_part2.root'
-    #rootfile = 'step3_Tau_E3_n1000_part3.root'
-    #rootfile = 'step3_Tau_E5_n1000_part9.root'
-    #rootfile = 'step3_Tau_E10_n1000_part10.root'
-    #rootfile = 'step3_Tau_E25_n1000_part5.root'
-    #rootfile = 'step3_Tau_E50_n1000_part5.root'
-    #rootfile = 'step3_Tau_E75_n1000_part7.root'
-    #rootfile = 'step3_Tau_E100_n1000_part1.root'
-    #rootfile = 'step3_Tau_E200_n1000_part2.root'
-    #rootfile = 'step3_Tau_E300_n1000_part3.root'
+    #rootfile='step3_Pion_E300_n1000_part10.root'
+    rootfile = 'step3_Kaon_E200_n1000_part3.root'
+    #rootfile = 'step3_Gamma_E25_n1000_part9.root'
     branches = [
         b'rechit_eta',
         b'RecHitHGC_energy'

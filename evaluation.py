@@ -1,10 +1,10 @@
 import torch
 from torch_geometric.data import DataLoader
 import numpy as np
-import tqdm
+import tqdm  #(te quiero demasiado), creates a loading bar for iterable objects
 from time import strftime
 import os, os.path as osp
-import uuid
+import uuid #(Universally Unique Identifier), creates and assigns unique IDs to objects
 
 from datasets import tau_dataset, single_photon_dataset
 from torch_cmspepr.gravnet_model import GravnetModelWithNoiseFilter
@@ -17,6 +17,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+#perform principal component analysis to reduce cluster space dimensions
 def pca_down(cluster_space_coords: np.array, n_components: int = 3):
     from sklearn.decomposition import PCA
     dim = cluster_space_coords.shape[1]
@@ -26,17 +27,23 @@ def pca_down(cluster_space_coords: np.array, n_components: int = 3):
     assert out.shape == (cluster_space_coords.shape[0], n_components)
     return out
 
+#load model and model weights
 def get_model():
-    model = GravnetModelWithNoiseFilter(input_dim=9, output_dim=6, k=50, signal_threshold=.05)
+    #if signal_threshold is None then signal_threshold = 0.15
+    #model = GravnetModelWithNoiseFilter(input_dim=9, output_dim=6, k=50, signal_threshold=.05)
+    model = GravnetModelWithNoiseFilter(input_dim=9, output_dim=6, k=50, signal_threshold=0.15)
     ckpt = 'ckpt_train_taus_integrated_noise_Oct20_212115_best_397.pth.tar'
     model.load_state_dict(torch.load(ckpt, map_location=torch.device('cpu'))['model'])
     return model
 
+#get tau dataset and split it randomly 80%
 def get_dataset():
     _, test_dataset = tau_dataset().split(.8)
     return test_dataset
 
+#define class test yielder
 class TestYielder:
+    #intiialize testyielder attributes (self, model, dataset, weights)
     def __init__(self, model=None, dataset=None, ckpt=None):
         self.model = get_model() if model is None else model
         if ckpt:
@@ -44,19 +51,23 @@ class TestYielder:
         self.dataset = get_dataset() if dataset is None else dataset
         self.reset_loader()
 
+    #reset data loader
     def reset_loader(self):
         self.loader = DataLoader(self.dataset, batch_size=1, shuffle=False)
 
+    #create event_filter (why does it need to create an empty event filter?)
     def event_filter(self, event):
         """Subclassable to make an event-level filter before any model inference (for speed)"""
         return True
 
+    #set class to be an iterable object
     def __iter__(self):
         """
         Default iterator: Just the data
         """
         return self.iter()
 
+    #iterates over the data and adds a loading bar using tqdm
     def _iter_data(self, nmax=None, start=None):
         i_done = 0
         for i, data in tqdm.tqdm(enumerate(self.loader), total=(len(self.loader) if nmax is None else nmax)):
@@ -65,12 +76,14 @@ class TestYielder:
             yield i, data
             i_done += 1
 
+    #iterates over the events in the data; continues until it finds a non-filtered event (i.e not noise) and saves the event for later 
     def iter(self, nmax=None, start=None):
         for i, data in self._iter_data(nmax, start):
             event = Event(data)
             if not self.event_filter(event): continue
             yield event
 
+    #takes the non-filtered event and evaluates the model on it, calculateing betas, getting cluster coords and storing the predictions; saves event and prediction for later
     def iter_pred(self, nmax=None, start=None):
         with torch.no_grad():
             self.model.eval()
@@ -84,20 +97,23 @@ class TestYielder:
                 prediction = Prediction(pass_noise_filter, pred_betas, pred_cluster_space_coords)
                 yield event, prediction
     
+    #creates clusters based on predictions
     def iter_clustering(self, tbeta, td, nmax=None, start=None):
         for event, prediction in self.iter_pred(nmax, start):
             clustering = cluster(prediction, tbeta, td)
             yield event, prediction, clustering
 
+    #matches predictions to clusters
     def iter_matches(self, tbeta, td, nmax=None, start=None):
         for event, prediction, clustering in self.iter_clustering(tbeta, td, nmax, start):
             matches = make_matches(event, prediction, clustering=clustering)
             yield event, prediction, clustering, matches
 
 
+#subclass for EM events test
 class TestYielderEM(TestYielder):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs): #*args: variable arguments, **kwargs: variable keywords arguments
+        super().__init__(*args, **kwargs) #inherits __init__ from TestYielder
         self.min_em_fraction = 1.0
 
     def event_filter(self, event):
@@ -149,22 +165,28 @@ class Event:
         if hasattr(self, 'inpz'): new.inpz = self.inpz
         return new
 
+    #get true energy
+    # assign property decorator so that the class has property attributes (fget, fset, fdel, docs)
     @property
     def truth_e_bound(self):
         return self.truth_cluster_props[:,0]
 
+    #get true x coordinate
     @property
     def truth_x_bound(self):
         return self.truth_cluster_props[:,1]
 
+    #get true y coordinate
     @property
     def truth_y_bound(self):
         return self.truth_cluster_props[:,2]
 
+    #get true time
     @property
     def truth_time(self):
         return self.truth_cluster_props[:,3]
 
+    #get true particle id
     @property
     def truth_pdgid(self):
         return self.truth_cluster_props[:,4]
@@ -469,6 +491,7 @@ def statistics_per_match(event: Event, clustering, matches):
             event.energy[sel_truth_hits & sel_pred_hits].sum() / event.energy[sel_truth_hits | sel_pred_hits].sum()
             )
         stats.add('category', get_category(np.unique(event.truth_pdgid[sel_truth_hits])))
+        print('category', get_category('category', np.unique(event.truth_pdgid[sel_truth_hits])))
         stats.add('nhits_pred', sel_pred_hits.sum())
         stats.add('esum_pred', event.energy[sel_pred_hits].sum())
         stats.add('nhits_truth', sel_truth_hits.sum())
